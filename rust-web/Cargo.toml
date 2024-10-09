@@ -1,0 +1,11 @@
+[workspace]
+
+resolver = "2"
+
+members = [
+    'lib_config',
+    'lib_error',
+    'lib_middleware',
+    'lib_schema',
+    'srv_backend',
+]

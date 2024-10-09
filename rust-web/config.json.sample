@@ -1,0 +1,7 @@
+{
+  "bind_backend": "0.0.0.0:9000",
+  "workers_backend": 10,
+  "api_version": "v1",
+  "log_level": "debug",
+  "pg_connection": 5
+}

@@ -1,0 +1,2 @@
+cd rust-web
+cargo watch -x "run --bin srv_backend"
