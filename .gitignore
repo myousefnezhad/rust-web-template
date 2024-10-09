@@ -1,0 +1,12 @@
+rust-web/target/*
+rust-web/.env
+rust-web/config.json
+rust-web/server.crt
+rust-web/rsa_key
+rust-web/rsa_key.pub
+rust-web/Cargo.lock
+**/._*
+**/.nfs*
+**/dist
+**/target
+**/server.crt
