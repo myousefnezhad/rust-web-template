@@ -12,6 +12,7 @@ use lib_middleware::validator;
 pub fn handlers(cfg: &mut ServiceConfig) {
     let auth = HttpAuthentication::bearer(validator);
     cfg.service(get_index)
+        .service(say_hi)
         .service(
             scope("/auth")
                 .wrap(auth)

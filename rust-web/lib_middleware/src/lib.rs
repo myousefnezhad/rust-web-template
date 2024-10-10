@@ -8,7 +8,7 @@ use lib_error::http::ResponseError;
 use log::*;
 use serde::Serialize;
 
-// curl -v -X POST -H 'Authorization: Bearer A B'  http://localhost:9000/auth/ping
+// curl -v -X POST -H 'Authorization: Bearer A B' -H 'Content-Type: application/json' 
 pub async fn validator(
     mut req: ServiceRequest,
     credentials: BearerAuth,
