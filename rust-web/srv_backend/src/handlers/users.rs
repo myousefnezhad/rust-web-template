@@ -1,16 +1,15 @@
-use actix_web::{get, post, patch, delete, web, Responder, Result, HttpRequest};
 use crate::AppState;
+use actix_web::{delete, get, patch, post, web, HttpRequest, Responder, Result};
 use lib_error::http::ResponseError;
-use log::*;
 use lib_middleware::json_response;
-use lib_schema::public::users::{ListUser, AddUser, UpdateUser, DeleteUser};
-
+use lib_schema::public::users::{AddUser, DeleteUser, ListUser, UpdateUser};
+use log::*;
 
 // curl -v -H 'Authorization: Bearer A B'  http://localhost:9000/auth/users
 #[get("/users")]
 pub async fn get_users(
     req: HttpRequest,
-    state: web::Data<AppState>
+    state: web::Data<AppState>,
 ) -> Result<impl Responder, ResponseError> {
     let db_pool = state.db_pool.clone();
     let res = sqlx::query_as::<_, ListUser>("SELECT * FROM public.users")
@@ -25,7 +24,7 @@ pub async fn get_users(
 pub async fn post_user(
     req: HttpRequest,
     state: web::Data<AppState>,
-    user: web::Json<AddUser>
+    user: web::Json<AddUser>,
 ) -> Result<impl Responder, ResponseError> {
     let db_pool = state.db_pool.clone();
     let _ = sqlx::query("INSERT INTO public.users (name, email, password) VALUES ($1, $2, $3)")
@@ -43,7 +42,7 @@ pub async fn post_user(
 pub async fn patch_user(
     req: HttpRequest,
     state: web::Data<AppState>,
-    user: web::Json<UpdateUser>
+    user: web::Json<UpdateUser>,
 ) -> Result<impl Responder, ResponseError> {
     let db_pool = state.db_pool.clone();
     let _ = sqlx::query("UPDATE public.users SET name=$1, email=$2, password=$3 WHERE id=$4")
@@ -62,7 +61,7 @@ pub async fn patch_user(
 pub async fn delete_user(
     req: HttpRequest,
     state: web::Data<AppState>,
-    user: web::Json<DeleteUser>
+    user: web::Json<DeleteUser>,
 ) -> Result<impl Responder, ResponseError> {
     let db_pool = state.db_pool.clone();
     let _ = sqlx::query("DELETE FROM public.users WHERE id=$1")

@@ -8,7 +8,7 @@ use lib_error::http::ResponseError;
 use log::*;
 use serde::Serialize;
 
-// curl -v -X POST -H 'Authorization: Bearer A B' -H 'Content-Type: application/json' 
+// curl -v -X POST -H 'Authorization: Bearer A B' -H 'Content-Type: application/json'
 pub async fn validator(
     mut req: ServiceRequest,
     credentials: BearerAuth,
@@ -35,18 +35,18 @@ pub async fn validator(
 
     if access_token == "access_token" || refresh_token == "refresh_token" {
         add_headers(&mut req, &access_token, &refresh_token);
-        return Ok(req)
+        return Ok(req);
     }
 
     return Err((
-            ResponseError::new(
-                "Tokens are not valid!".to_owned(),
-                StatusCode::BAD_REQUEST,
-                -1,
-            )
-            .into(),
-            req,
-        ));
+        ResponseError::new(
+            "Tokens are not valid!".to_owned(),
+            StatusCode::BAD_REQUEST,
+            -1,
+        )
+        .into(),
+        req,
+    ));
 }
 
 fn add_headers(req: &mut ServiceRequest, access_token: &str, refresh_token: &str) {
@@ -81,7 +81,7 @@ where
         .unwrap()
         .to_str()
         .unwrap();
-    
+
     let auth_user = req
         .headers()
         .get(header::HeaderName::from_static("x-auth-user"))

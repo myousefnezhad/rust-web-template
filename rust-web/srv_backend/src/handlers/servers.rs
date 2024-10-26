@@ -1,8 +1,8 @@
-use actix_web::{post, Responder, Result, HttpRequest};
+use actix_web::{post, HttpRequest, Responder, Result};
 use lib_error::http::ResponseError;
+use lib_middleware::json_response;
 use log::*;
 use serde::Serialize;
-use lib_middleware::json_response;
 
 #[derive(Serialize, Debug)]
 pub struct PingInfo {
@@ -13,6 +13,8 @@ pub struct PingInfo {
 #[post("/ping")]
 pub async fn post_ping(req: HttpRequest) -> Result<impl Responder, ResponseError> {
     debug!("ping");
-    let res = PingInfo { message: "pong".to_owned() };
+    let res = PingInfo {
+        message: "pong".to_owned(),
+    };
     Ok(json_response::<PingInfo>(&res, &req))
 }

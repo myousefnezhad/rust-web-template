@@ -6,9 +6,10 @@ use std::{env, fs};
 pub struct AppConfig {
     pub bind_backend: String, // 0.0.0.0:9000
     pub workers_backend: usize,
-    pub api_version: String,        // v1
-    pub log_level: String,          // Debug, Info, Warn, Error
+    pub api_version: String, // v1
+    pub log_level: String,   // Debug, Info, Warn, Error
     pub pg_connection: usize,
+    pub pq_sql_lib: String, // SQL Query Directory Path
 }
 
 impl AppConfig {

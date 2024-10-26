@@ -3,5 +3,6 @@
   "workers_backend": 10,
   "api_version": "v1",
   "log_level": "debug",
-  "pg_connection": 5
+  "pg_connection": 5,
+  "pq_sql_lib": "/SQL"
 }

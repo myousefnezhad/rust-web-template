@@ -25,3 +25,4 @@ lib_config = {path = "../lib_config"}
 lib_middleware = {path = "../lib_middleware"}
 lib_schema = {path = "../lib_schema"}
 lib_error = {path = "../lib_error"}
+lib_sql_lib ={ path = "../lib_sql_lib"}

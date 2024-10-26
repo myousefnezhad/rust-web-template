@@ -3,16 +3,15 @@ extern crate ansi_escapes;
 use crate::handlers::handlers;
 use actix_web::middleware::Logger;
 use actix_web::{web, App, HttpServer};
+use dotenv::dotenv;
 use env_logger::Env;
 use lib_config::AppConfig;
 use log::*;
-use std::thread::sleep;
-use dotenv::dotenv;
-use std::time::Duration;
-use std::env;
 use sqlx::postgres::{PgPoolOptions, Postgres};
 use sqlx::Pool;
-
+use std::env;
+use std::thread::sleep;
+use std::time::Duration;
 
 const JSON_REQUEST_SIZE: usize = 1024 * 1024 * 50; // 50 Mb
 const PAYL_REQUEST_SIZE: usize = 1024 * 1024; // 1 Mb
@@ -23,7 +22,6 @@ pub struct AppState {
     pub app_config: AppConfig,
     pub db_pool: Pool<Postgres>,
 }
-
 
 pub async fn backend_service() {
     dotenv().ok();
@@ -43,7 +41,9 @@ pub async fn backend_service() {
 
     let db_pool = PgPoolOptions::new()
         .max_connections(pg_connection.try_into().unwrap())
-        .connect(&database_url).await.unwrap();
+        .connect(&database_url)
+        .await
+        .unwrap();
 
     let app_state = AppState {
         app_config: app_config.clone(),

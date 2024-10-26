@@ -6,6 +6,7 @@ members = [
     'lib_config',
     'lib_error',
     'lib_middleware',
-    'lib_schema',
+    'lib_schema', 
+    'lib_sql_lib',
     'srv_backend',
 ]

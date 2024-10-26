@@ -4,11 +4,13 @@ use actix_web::{body::BoxBody, HttpResponse};
 use derive_more::{Display, Error};
 use log::*;
 use serde::Serialize;
-use std::default::Default;
 use sqlx::Error as SQLError;
+use std::default::Default;
+use std::io::Error as IOError;
 
 pub static SYSTEM_ERROR_CODE: i64 = -1000;
 static SYSTEM_ERROR_CODE_DB: i64 = -1001;
+static SYSTEM_ERROR_CODE_IO: i64 = -1002;
 
 #[derive(Debug, Display, Error, Default)]
 #[display(
@@ -50,6 +52,15 @@ impl From<SQLError> for ResponseError {
     }
 }
 
+impl From<IOError> for ResponseError {
+    fn from(value: IOError) -> Self {
+        Self {
+            message: format!("{:?}", value),
+            status: StatusCode::BAD_REQUEST,
+            code: SYSTEM_ERROR_CODE_IO,
+        }
+    }
+}
 
 impl error::ResponseError for ResponseError {
     fn status_code(&self) -> StatusCode {

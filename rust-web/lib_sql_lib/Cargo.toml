@@ -1,0 +1,10 @@
+[package]
+name = "lib_sql_lib"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+log = "0.4.20"
+
+lib_error = {path = "../lib_error"}
+lib_config = { path = "../lib_config"}
