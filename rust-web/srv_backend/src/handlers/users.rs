@@ -3,6 +3,7 @@ use actix_web::{delete, get, patch, post, web, HttpRequest, Responder, Result};
 use lib_error::http::ResponseError;
 use lib_middleware::json_response;
 use lib_schema::public::users::{AddUser, DeleteUser, ListUser, UpdateUser};
+use lib_sql_lib::common::QueryLibrary;
 use log::*;
 
 // curl -v -H 'Authorization: Bearer A B'  http://localhost:9000/auth/users
@@ -12,9 +13,11 @@ pub async fn get_users(
     state: web::Data<AppState>,
 ) -> Result<impl Responder, ResponseError> {
     let db_pool = state.db_pool.clone();
-    let res = sqlx::query_as::<_, ListUser>("SELECT * FROM public.users")
-        .fetch_all(&db_pool)
-        .await?;
+    let config = state.app_config.clone();
+    let res =
+        sqlx::query_as::<_, ListUser>(&ListUser::read_query_from_lib(&config, "select_users.sql")?)
+            .fetch_all(&db_pool)
+            .await?;
     debug!("GET: all users");
     Ok(json_response(&res, &req))
 }
@@ -27,13 +30,28 @@ pub async fn post_user(
     user: web::Json<AddUser>,
 ) -> Result<impl Responder, ResponseError> {
     let db_pool = state.db_pool.clone();
-    let _ = sqlx::query("INSERT INTO public.users (name, email, password) VALUES ($1, $2, $3)")
-        .bind(user.name.clone())
-        .bind(user.email.clone())
-        .bind(user.password.clone())
-        .execute(&db_pool)
-        .await?;
-    debug!("{}", format!("INSERT user: {:#?}", user));
+    let _ = match &user.id {
+        Some(id) => {
+            sqlx::query(&AddUser::function_call(
+                "public.insert_user($1, $2, $3, $4)",
+            ))
+            .bind(id)
+            .bind(&user.name)
+            .bind(&user.email)
+            .bind(&user.password)
+            .execute(&db_pool)
+            .await?
+        }
+        None => {
+            sqlx::query(&AddUser::function_call("public.insert_user($1, $2, $3)"))
+                .bind(&user.name)
+                .bind(&user.email)
+                .bind(&user.password)
+                .execute(&db_pool)
+                .await?
+        }
+    };
+    debug!("{}", format!("INSERT user: {:#?}", &user));
     Ok(json_response::<AddUser>(&user, &req))
 }
 
@@ -45,14 +63,16 @@ pub async fn patch_user(
     user: web::Json<UpdateUser>,
 ) -> Result<impl Responder, ResponseError> {
     let db_pool = state.db_pool.clone();
-    let _ = sqlx::query("UPDATE public.users SET name=$1, email=$2, password=$3 WHERE id=$4")
-        .bind(user.name.clone())
-        .bind(user.email.clone())
-        .bind(user.password.clone())
-        .bind(user.id.clone())
-        .execute(&db_pool)
-        .await?;
-    debug!("{}", format!("Update user: {:#?}", user));
+    let _ = sqlx::query(&UpdateUser::function_call(
+        "public.update_user($1, $2, $3, $4)",
+    ))
+    .bind(&user.id)
+    .bind(&user.name)
+    .bind(&user.email)
+    .bind(&user.password)
+    .execute(&db_pool)
+    .await?;
+    debug!("{}", format!("Update user: {:#?}", &user));
     Ok(json_response::<UpdateUser>(&user, &req))
 }
 
@@ -64,10 +84,10 @@ pub async fn delete_user(
     user: web::Json<DeleteUser>,
 ) -> Result<impl Responder, ResponseError> {
     let db_pool = state.db_pool.clone();
-    let _ = sqlx::query("DELETE FROM public.users WHERE id=$1")
-        .bind(user.id.clone())
+    let _ = sqlx::query(&DeleteUser::function_call("public.delete_user($1)"))
+        .bind(&user.id)
         .execute(&db_pool)
         .await?;
-    debug!("{}", format!("Delete user: {:#?}", user));
+    debug!("{}", format!("Delete user: {:#?}", &user));
     Ok(json_response::<DeleteUser>(&user, &req))
 }

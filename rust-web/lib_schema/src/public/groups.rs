@@ -3,9 +3,21 @@ use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
-pub struct Groups {
-    pub id: Option<i32>,
-    pub name: Option<String>,
+pub struct Group {
+    pub id: i32,
+    pub name: String,
 }
+impl QueryLibrary for Group {}
 
-impl QueryLibrary for Groups {}
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+pub struct AddGroup {
+    pub id: Option<i32>,
+    pub name: String,
+}
+impl QueryLibrary for AddGroup {}
+
+#[derive(Debug, Serialize, Deserialize, FromRow)]
+pub struct DeleteGroup {
+    pub id: i32,
+}
+impl QueryLibrary for DeleteGroup {}
