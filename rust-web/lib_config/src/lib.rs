@@ -10,6 +10,15 @@ pub struct AppConfig {
     pub log_level: String,   // Debug, Info, Warn, Error
     pub pg_connection: usize,
     pub pq_sql_lib: String, // SQL Query Directory Path
+
+    pub redis_url: String,  // redis://127.0.0.1:6379
+    pub redis_session: u64, // 10000
+    pub jwt_access_key: String,
+    pub jwt_access_session_min: i64,
+    pub jwt_refresh_key: String,
+    pub jwt_refresh_session_day: i64,
+    pub rsa_pri: String,
+    pub rsa_pub: String,
 }
 
 impl AppConfig {

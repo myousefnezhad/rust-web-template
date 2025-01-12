@@ -4,5 +4,13 @@
   "api_version": "v1",
   "log_level": "debug",
   "pg_connection": 5,
-  "pq_sql_lib": "/SQL"
+  "pq_sql_lib": "/SQL",
+  "redis_url": "redis://127.0.0.1:6379",
+  "redis_session": 2592000,
+  "jwt_access_key": "<KEY>",
+  "jwt_access_session_min": 120,
+  "jwt_refresh_key": "<KEY>",
+  "jwt_refresh_session_day": 365,
+  "rsa_pri": "/rsa_key",
+  "rsa_pub": "/rsa_key.pub"
 }
