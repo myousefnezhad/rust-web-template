@@ -21,4 +21,6 @@ pub trait QueryLibrary {
     fn function_call(function: &str) -> String {
         format!("SELECT {};", function)
     }
+
+    fn get_query() -> String;
 }

@@ -13,11 +13,9 @@ pub async fn get_users(
     state: web::Data<AppState>,
 ) -> Result<impl Responder, ResponseError> {
     let db_pool = state.db_pool.clone();
-    let config = state.app_config.clone();
-    let res =
-        sqlx::query_as::<_, ListUser>(&ListUser::read_query_from_lib(&config, "select_users.sql")?)
-            .fetch_all(&db_pool)
-            .await?;
+    let res = sqlx::query_as::<_, ListUser>(&ListUser::get_query())
+        .fetch_all(&db_pool)
+        .await?;
     debug!("GET: all users");
     Ok(json_response(&res, &req))
 }

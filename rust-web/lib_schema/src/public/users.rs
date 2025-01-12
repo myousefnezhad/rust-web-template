@@ -8,7 +8,11 @@ pub struct ListUser {
     pub email: String,
     pub name: String,
 }
-impl QueryLibrary for ListUser {}
+impl QueryLibrary for ListUser {
+    fn get_query() -> String {
+        include_str!("../../../SQL/select_users.sql").to_string()
+    }
+}
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct AddUser {
@@ -17,7 +21,11 @@ pub struct AddUser {
     pub name: String,
     pub password: String,
 }
-impl QueryLibrary for AddUser {}
+impl QueryLibrary for AddUser {
+    fn get_query() -> String {
+        "".to_owned()
+    }
+}
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct UpdateUser {
@@ -26,10 +34,18 @@ pub struct UpdateUser {
     pub name: String,
     pub password: String,
 }
-impl QueryLibrary for UpdateUser {}
+impl QueryLibrary for UpdateUser {
+    fn get_query() -> String {
+        "".to_owned()
+    }
+}
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct DeleteUser {
     pub id: i32,
 }
-impl QueryLibrary for DeleteUser {}
+impl QueryLibrary for DeleteUser {
+    fn get_query() -> String {
+        "".to_owned()
+    }
+}
