@@ -7,6 +7,7 @@ members = [
     'lib_crypto',
     'lib_error',
     'lib_middleware',
+    'lib_redis',
     'lib_schema',
     'lib_sql_lib',
     'srv_backend',
