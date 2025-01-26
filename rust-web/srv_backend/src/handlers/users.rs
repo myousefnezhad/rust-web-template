@@ -1,5 +1,6 @@
 use crate::AppState;
 use actix_web::{delete, get, patch, post, web, HttpRequest, Responder, Result};
+use lib_crypto::hash::hash;
 use lib_error::http::ResponseError;
 use lib_middleware::json_response;
 use lib_schema::public::users::{AddUser, DeleteUser, ListUser, UpdateUser};
@@ -28,6 +29,7 @@ pub async fn post_user(
     user: web::Json<AddUser>,
 ) -> Result<impl Responder, ResponseError> {
     let db_pool = state.db_pool.clone();
+    let hash_password = hash(&user.password)?.to_string();
     let _ = match &user.id {
         Some(id) => {
             sqlx::query(&AddUser::function_call(
@@ -36,7 +38,7 @@ pub async fn post_user(
             .bind(id)
             .bind(&user.name)
             .bind(&user.email)
-            .bind(&user.password)
+            .bind(&hash_password)
             .execute(&db_pool)
             .await?
         }
@@ -44,7 +46,7 @@ pub async fn post_user(
             sqlx::query(&AddUser::function_call("public.insert_user($1, $2, $3)"))
                 .bind(&user.name)
                 .bind(&user.email)
-                .bind(&user.password)
+                .bind(&hash_password)
                 .execute(&db_pool)
                 .await?
         }

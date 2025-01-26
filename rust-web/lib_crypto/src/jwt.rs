@@ -11,8 +11,7 @@ pub struct Claims {
     pub exp: i64,
     pub iat: i64,
     pub email: String,
-    pub id: i64,
-    pub role: i32,
+    pub role: u64,
     pub session: u64,
 }
 

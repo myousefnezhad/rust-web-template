@@ -1,8 +1,12 @@
 use actix_web::error;
 use actix_web::http::StatusCode;
 use actix_web::{body::BoxBody, HttpResponse};
+use bcrypt::BcryptError;
+use deadpool_redis::redis::RedisError;
 use derive_more::{Display, Error};
+use jsonwebtoken::errors::Error as JWTError;
 use log::*;
+use rsa::Error as RSAError;
 use serde::Serialize;
 use sqlx::Error as SQLError;
 use std::default::Default;
@@ -11,6 +15,7 @@ use std::io::Error as IOError;
 pub static SYSTEM_ERROR_CODE: i64 = -1000;
 static SYSTEM_ERROR_CODE_DB: i64 = -1001;
 static SYSTEM_ERROR_CODE_IO: i64 = -1002;
+static SYSTEM_ERROR_CODE_CRYPTO: i64 = -1003;
 
 #[derive(Debug, Display, Error, Default)]
 #[display(
@@ -52,12 +57,52 @@ impl From<SQLError> for ResponseError {
     }
 }
 
+impl From<RedisError> for ResponseError {
+    fn from(value: RedisError) -> Self {
+        Self {
+            message: format!("{:?}", value),
+            status: StatusCode::BAD_REQUEST,
+            code: SYSTEM_ERROR_CODE_DB,
+        }
+    }
+}
+
 impl From<IOError> for ResponseError {
     fn from(value: IOError) -> Self {
         Self {
             message: format!("{:?}", value),
             status: StatusCode::BAD_REQUEST,
             code: SYSTEM_ERROR_CODE_IO,
+        }
+    }
+}
+
+impl From<JWTError> for ResponseError {
+    fn from(value: JWTError) -> Self {
+        Self {
+            message: format!("{:?}", value),
+            status: StatusCode::BAD_REQUEST,
+            code: SYSTEM_ERROR_CODE_CRYPTO,
+        }
+    }
+}
+
+impl From<RSAError> for ResponseError {
+    fn from(value: RSAError) -> Self {
+        Self {
+            message: format!("{:?}", value),
+            status: StatusCode::BAD_REQUEST,
+            code: SYSTEM_ERROR_CODE_CRYPTO,
+        }
+    }
+}
+
+impl From<BcryptError> for ResponseError {
+    fn from(value: BcryptError) -> Self {
+        Self {
+            message: format!("{:?}", value),
+            status: StatusCode::BAD_REQUEST,
+            code: SYSTEM_ERROR_CODE_CRYPTO,
         }
     }
 }

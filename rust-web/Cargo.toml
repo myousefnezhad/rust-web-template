@@ -2,7 +2,7 @@
 
 resolver = "2"
 
-members = [
+members = [ "lib_app_state",
     'lib_config',
     'lib_crypto',
     'lib_error',

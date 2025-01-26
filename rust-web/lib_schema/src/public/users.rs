@@ -15,6 +15,20 @@ impl QueryLibrary for ListUser {
 }
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
+pub struct LoginUser {
+    pub id: i32,
+    pub email: String,
+    pub name: String,
+    pub password: String,
+}
+
+impl QueryLibrary for LoginUser {
+    fn get_query() -> String {
+        include_str!("../../../SQL/login_user.sql").to_string()
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct AddUser {
     pub id: Option<i32>,
     pub email: String,
