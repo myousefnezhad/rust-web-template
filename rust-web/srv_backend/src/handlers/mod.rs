@@ -4,6 +4,7 @@ pub mod index;
 pub mod login;
 pub mod servers;
 pub mod users;
+pub mod register;
 
 use crate::handlers::base::*;
 use crate::handlers::groups::*;
@@ -11,6 +12,7 @@ use crate::handlers::index::*;
 use crate::handlers::login::*;
 use crate::handlers::servers::*;
 use crate::handlers::users::*;
+use crate::handlers::register::*;
 use actix_web::web::{scope, ServiceConfig};
 use actix_web_httpauth::middleware::HttpAuthentication;
 use lib_middleware::validator;
@@ -20,7 +22,9 @@ pub fn handlers(cfg: &mut ServiceConfig) {
     cfg.service(get_index)
         .service(page_index)
         .service(page_login)
+        .service(page_register)
         .service(post_login)
+        .service(post_register)
         .service(say_hi)
         .service(
             scope("/auth")

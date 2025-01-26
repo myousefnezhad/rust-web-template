@@ -1,5 +1,5 @@
 use crate::AppState;
-use actix_web::{delete, get, patch, post, web, HttpRequest, Responder, Result};
+use actix_web::{delete, get, patch, post, web, HttpRequest, Responder, Result, HttpResponse};
 use lib_crypto::hash::hash;
 use lib_error::http::ResponseError;
 use lib_middleware::json_response;
@@ -53,6 +53,24 @@ pub async fn post_user(
     };
     debug!("{}", format!("INSERT user: {:#?}", &user));
     Ok(json_response::<AddUser>(&user, &req))
+}
+
+#[post("/register")]
+pub async fn post_register(
+    _req: HttpRequest,
+    state: web::Data<AppState>,
+    user: web::Json<AddUser>,
+) -> Result<impl Responder, ResponseError> {
+    let db_pool = state.db_pool.clone();
+    let hash_password = hash(&user.password)?.to_string();
+    sqlx::query(&AddUser::function_call("public.insert_user($1, $2, $3)"))
+        .bind(&user.name)
+        .bind(&user.email)
+        .bind(&hash_password)
+        .execute(&db_pool)
+        .await?;
+    debug!("{}", format!("INSERT user: {:#?}", &user));
+    Ok(HttpResponse::Ok())
 }
 
 // curl -v -X PATCH -H 'Content-Type: application/json' -H 'Authorization: Bearer A B' -d '{"id": 2, "name": "Alex", "email": "alex@mail.com", "password": "876"}'  http://localhost:9000/auth/user
