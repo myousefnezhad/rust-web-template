@@ -2,5 +2,46 @@
 <body>
   <h1>Welcome</h1>
   <p>{{ data }}</p>
+  <p>Login Status</p>
+  <div id="status"></div>
+
+  <script>
+    function logout() {
+      localStorage.setItem('jwtToken', '');
+      location.reload(true);
+    }
+    document.addEventListener("DOMContentLoaded", async function () {
+      try {
+        const token = localStorage.getItem('jwtToken');
+        if (token === null) {
+          throw new Error("Token not found!");
+        }
+        
+        const response = await fetch('/auth/ping', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({})
+        });
+
+        if (!response.ok) {
+            throw new Error('Login failed');
+        }
+        try {
+          const email = response.headers.get('x-auth-email');
+          const session = response.headers.get('x-auth-session');
+          const role = response.headers.get('x-auth-role');
+          document.getElementById('status').innerHTML = `<ul><li>Email: ${email}</li><li>Session: ${session}</li><li>Role: ${role}</li></ul><br/><button onclick="logout()">Logout</button>`;
+        } catch {
+          document.getElementById('status').innerHTML = '<p>Login (Cannot Parse Headers)</p><br/><button onclick="logout()">Logout</button>';
+        }
+        
+      } catch (error) {
+        document.getElementById('status').innerHTML = '<p>Not Login. Login from <a href="/login">here</a></p>';
+      }
+    });
+  </script>
 </body>
 </html>

@@ -12,6 +12,7 @@ actix-web = "4.4.0"
 actix-web-httpauth = "0.8.1"
 serde = {version = "1.0.188", features = ["derive"]}
 
+lib_app_state = {path = "../lib_app_state"}
 lib_config = {path = "../lib_config"}
+lib_crypto = {path = "../lib_crypto"}
 lib_error = {path = "../lib_error"}
-
