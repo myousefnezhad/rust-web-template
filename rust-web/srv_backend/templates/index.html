@@ -33,6 +33,8 @@
           const email = response.headers.get('x-auth-email');
           const session = response.headers.get('x-auth-session');
           const role = response.headers.get('x-auth-role');
+          const tokens = response.headers.get('x-auth-tokens');
+          localStorage.setItem('jwtToken', tokens);
           document.getElementById('status').innerHTML = `<ul><li>Email: ${email}</li><li>Session: ${session}</li><li>Role: ${role}</li></ul><br/><button onclick="logout()">Logout</button>`;
         } catch {
           document.getElementById('status').innerHTML = '<p>Login (Cannot Parse Headers)</p><br/><button onclick="logout()">Logout</button>';

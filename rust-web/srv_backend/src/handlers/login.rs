@@ -7,6 +7,7 @@ use lib_crypto::{
     jwt::{generate_token, Algorithm, Claims},
 };
 use lib_error::http::ResponseError;
+use lib_redis::Redis;
 use lib_schema::public::users::LoginUser;
 use lib_sql_lib::common::QueryLibrary;
 use rand::Rng;
@@ -44,10 +45,11 @@ pub async fn post_login(
 ) -> Result<impl Responder, ResponseError> {
     let pool = state.db_pool.clone();
     let config = state.app_config.clone();
+    let redis = state.redis.clone();
     let jwt_access_key = config.jwt_access_key.clone();
     let jwt_access_session_min = config.jwt_access_session_min;
-    let _jwt_refresh_key = config.jwt_refresh_key.clone();
-    let _jwt_refresh_session_day = config.jwt_refresh_session_day;
+    let jwt_refresh_key = config.jwt_refresh_key.clone();
+    let jwt_refresh_session_day = config.jwt_refresh_session_day;
 
     // Get Data From DB
     let user_info = match sqlx::query_as::<_, LoginUser>(&LoginUser::get_query())
@@ -73,23 +75,35 @@ pub async fn post_login(
         ));
     }
 
+    // Access Token
     let mut rng = rand::thread_rng();
     let iat = Utc::now().timestamp();
     let exp = (Utc::now() + Duration::minutes(jwt_access_session_min)).timestamp();
     let session: u64 = rng.gen();
     let email = user_info.email.to_string();
-
     let access_claim = Claims {
         iat,
         exp,
-        email,
+        email: email.clone(),
         role: 0u64,
         session,
     };
 
+    // Refresh Token
+    let exp = (Utc::now() + Duration::days(jwt_refresh_session_day)).timestamp();
+    let refresh_claim = Claims {
+        iat,
+        exp,
+        email: email.clone(),
+        role: 0u64,
+        session,
+    };
+    // Generate Tokens
     let access_token = generate_token(Algorithm::HS256, &jwt_access_key, &access_claim)?;
-
-    let refresh_token = "NOT_DEFINED";
+    let refresh_token = generate_token(Algorithm::HS256, &jwt_refresh_key, &refresh_claim)?;
+    // Saving Refresh Token in Redis
+    let redis_key = format!("{}:{}", &email, &session);
+    let _ = Redis::set(&redis, &redis_key, &refresh_token).await?;
 
     Ok(HttpResponse::Ok().json(&LoginRes {
         token: format!("{} {}", access_token, refresh_token),
