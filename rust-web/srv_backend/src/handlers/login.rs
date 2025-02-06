@@ -40,7 +40,7 @@ struct LoginRes {
 
 #[post("/login")]
 pub async fn post_login(
-    _req: HttpRequest,
+    req: HttpRequest,
     state: web::Data<AppState>,
     login: web::Json<LoginInfo>,
 ) -> Result<impl Responder, ResponseError> {
@@ -104,11 +104,22 @@ pub async fn post_login(
     let refresh_token = generate_token(Algorithm::HS256, &jwt_refresh_key, &refresh_claim)?;
     // Saving Refresh Token in Redis
     let redis_key = format!("{}:{}", &email, &session);
+    let forward_address = req
+        .headers()
+        .get("X-Forward-For")
+        .and_then(|v| v.to_str().ok());
+    let address = match forward_address {
+        Some(ip) => format!("{}", ip),
+        None => match req.peer_addr() {
+            Some(ip) => format!("{}", ip),
+            None => "Not Defined!".into(),
+        },
+    };
     let redis_info = RedisInfo {
         email: email.clone(),
         role: 0u64,
         session,
-        address: "".to_owned(),
+        address,
         browser: login.browser.clone(),
         token: refresh_token.clone(),
     };

@@ -176,3 +176,19 @@ where
         .append_header(("x-auth-tokens", auth_tokens))
         .json(json)
 }
+
+pub fn get_email<'a>(req: &'a HttpRequest) -> &'a str {
+    req.headers()
+        .get(header::HeaderName::from_static("x-auth-email"))
+        .unwrap()
+        .to_str()
+        .unwrap()
+}
+
+pub fn get_session<'a>(req: &'a HttpRequest) -> &'a str {
+    req.headers()
+        .get(header::HeaderName::from_static("x-auth-session"))
+        .unwrap()
+        .to_str()
+        .unwrap()
+}
