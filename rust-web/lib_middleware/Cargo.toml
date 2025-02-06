@@ -6,16 +6,15 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rand = "0.8.5"
 log = "0.4.20"
 jsonwebtoken = "9"
 actix-web = "4.4.0"
 actix-web-httpauth = "0.8.1"
-chrono = {version = "0.4.39", features=["serde"]}
-serde = {version = "1.0.188", features = ["derive"]}
+chrono = { version = "0.4.39", features = ["serde"] }
+serde = { version = "1.0.188", features = ["derive"] }
 
-lib_app_state = {path = "../lib_app_state"}
-lib_config = {path = "../lib_config"}
-lib_crypto = {path = "../lib_crypto"}
-lib_error = {path = "../lib_error"}
-lib_redis = {path = "../lib_redis"}
+lib_app_state = { path = "../lib_app_state" }
+lib_config = { path = "../lib_config" }
+lib_crypto = { path = "../lib_crypto" }
+lib_error = { path = "../lib_error" }
+lib_redis = { path = "../lib_redis" }
