@@ -8,6 +8,29 @@
 
   <script>
     function logout() {
+      try {
+        const token = localStorage.getItem('jwtToken');
+        if (token) {
+        console.log('here');
+          fetch('/auth/logout', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({})
+          })
+          .then(response => {
+            if (!response.ok) {
+              const err = response.json();
+              throw new Error(err.message || 'Login failed. Please check your credentials.');
+            }
+          });
+        }
+      } catch (error) {
+        console.log(error);
+        alert(error);
+      }
       localStorage.setItem('jwtToken', '');
       location.reload(true);
     }

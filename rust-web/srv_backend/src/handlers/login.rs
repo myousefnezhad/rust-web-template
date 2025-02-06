@@ -7,6 +7,7 @@ use lib_crypto::{
     jwt::{generate_token, Algorithm, Claims, RedisInfo},
 };
 use lib_error::http::ResponseError;
+use lib_middleware::{get_email, get_session};
 use lib_redis::Redis;
 use lib_schema::public::users::LoginUser;
 use lib_sql_lib::common::QueryLibrary;
@@ -131,4 +132,16 @@ pub async fn post_login(
     Ok(HttpResponse::Ok().json(&LoginRes {
         token: format!("{} {}", access_token, refresh_token),
     }))
+}
+
+#[post("/logout")]
+pub async fn post_logout(
+    req: HttpRequest,
+    state: web::Data<AppState>,
+) -> Result<impl Responder, ResponseError> {
+    let redis = state.redis.clone();
+    let email = get_email(&req);
+    let session = get_session(&req);
+    let _ = Redis::del(&redis, vec![&format!("{}:{}", &email, &session)]).await?;
+    Ok(HttpResponse::Ok())
 }

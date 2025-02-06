@@ -47,6 +47,7 @@ pub fn handlers(cfg: &mut ServiceConfig) {
                 .service(post_session)
                 .service(delete_session)
                 .service(patch_group)
+                .service(post_logout)
                 .service(delete_group),
         );
 }
