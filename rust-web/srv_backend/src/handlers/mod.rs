@@ -1,4 +1,5 @@
 pub mod base;
+pub mod google;
 pub mod groups;
 pub mod index;
 pub mod login;
@@ -8,6 +9,7 @@ pub mod session;
 pub mod users;
 
 use crate::handlers::base::*;
+use crate::handlers::google::*;
 use crate::handlers::groups::*;
 use crate::handlers::index::*;
 use crate::handlers::login::*;
@@ -27,7 +29,10 @@ pub fn handlers(cfg: &mut ServiceConfig) {
         .service(page_register)
         .service(page_session)
         .service(post_login)
+        .service(page_google_token)
         .service(post_register)
+        .service(get_google_auth)
+        .service(get_google_callback)
         .service(say_hi)
         .service(
             scope("/auth")

@@ -91,6 +91,7 @@ pub async fn validator(
                         email: email.clone(),
                         role: 0u64,
                         session,
+                        source: refresh_claim.source.clone(),
                     };
                     if let Ok(access_token) =
                         generate_token(Algorithm::HS256, &jwt_access_key, access_claim)

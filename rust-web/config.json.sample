@@ -12,5 +12,11 @@
   "jwt_refresh_key": "<KEY>",
   "jwt_refresh_session_day": 365,
   "rsa_pri": "/rsa_key",
-  "rsa_pub": "/rsa_key.pub"
+  "rsa_pub": "/rsa_key.pub",
+  "google_client_id": "",
+  "google_client_secret": "",
+  "google_redirect": "http://localhost:9000/google/callback",
+  "google_auth_url": "https://accounts.google.com/o/oauth2/v2/auth?response_type=code&scope=openid%20email%20profil&",
+  "google_token_url": "https://oauth2.googleapis.com/token",
+  "google_userinfo_url": "https://www.googleapis.com/oauth2/v2/userinfo"
 }

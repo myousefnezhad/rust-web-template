@@ -88,6 +88,7 @@ pub async fn post_login(
         email: email.clone(),
         role: 0u64,
         session,
+        source: "local".into(),
     };
 
     // Refresh Token
@@ -98,6 +99,7 @@ pub async fn post_login(
         email: email.clone(),
         role: 0u64,
         session,
+        source: "local".into(),
     };
     // Generate Tokens
     let access_token = generate_token(Algorithm::HS256, &jwt_access_key, &access_claim)?;
@@ -122,6 +124,7 @@ pub async fn post_login(
         address,
         browser: login.browser.clone(),
         token: refresh_token.clone(),
+        source: "local".into(),
     };
     let redis_info_str = serde_json::to_string(&redis_info)?;
     let _ = Redis::set(&redis, &redis_key, &redis_info_str).await?;
