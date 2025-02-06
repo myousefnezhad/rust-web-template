@@ -8,6 +8,7 @@ use jsonwebtoken::errors::Error as JWTError;
 use log::*;
 use rsa::Error as RSAError;
 use serde::Serialize;
+use serde_json::Error as JSONError;
 use sqlx::Error as SQLError;
 use std::default::Default;
 use std::io::Error as IOError;
@@ -16,6 +17,7 @@ pub static SYSTEM_ERROR_CODE: i64 = -1000;
 static SYSTEM_ERROR_CODE_DB: i64 = -1001;
 static SYSTEM_ERROR_CODE_IO: i64 = -1002;
 static SYSTEM_ERROR_CODE_CRYPTO: i64 = -1003;
+static SYSTEM_ERROR_CODE_JSON: i64 = -1004;
 
 #[derive(Debug, Display, Error, Default)]
 #[display(
@@ -73,6 +75,16 @@ impl From<IOError> for ResponseError {
             message: format!("{:?}", value),
             status: StatusCode::BAD_REQUEST,
             code: SYSTEM_ERROR_CODE_IO,
+        }
+    }
+}
+
+impl From<JSONError> for ResponseError {
+    fn from(value: JSONError) -> Self {
+        Self {
+            message: format!("{:?}", value),
+            status: StatusCode::INTERNAL_SERVER_ERROR,
+            code: SYSTEM_ERROR_CODE_JSON,
         }
     }
 }

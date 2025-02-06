@@ -4,7 +4,7 @@ use askama::Template;
 use chrono::{Duration, Utc};
 use lib_crypto::{
     hash::verify,
-    jwt::{generate_token, Algorithm, Claims},
+    jwt::{generate_token, Algorithm, Claims, RedisInfo},
 };
 use lib_error::http::ResponseError;
 use lib_redis::Redis;
@@ -30,6 +30,7 @@ pub async fn page_login(
 struct LoginInfo {
     email: String,
     password: String,
+    browser: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -103,8 +104,16 @@ pub async fn post_login(
     let refresh_token = generate_token(Algorithm::HS256, &jwt_refresh_key, &refresh_claim)?;
     // Saving Refresh Token in Redis
     let redis_key = format!("{}:{}", &email, &session);
-    let _ = Redis::set(&redis, &redis_key, &refresh_token).await?;
-
+    let redis_info = RedisInfo {
+        email: email.clone(),
+        role: 0u64,
+        session,
+        address: "".to_owned(),
+        browser: login.browser.clone(),
+        token: refresh_token.clone(),
+    };
+    let redis_info_str = serde_json::to_string(&redis_info)?;
+    let _ = Redis::set(&redis, &redis_key, &redis_info_str).await?;
     Ok(HttpResponse::Ok().json(&LoginRes {
         token: format!("{} {}", access_token, refresh_token),
     }))

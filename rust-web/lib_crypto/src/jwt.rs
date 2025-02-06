@@ -15,6 +15,16 @@ pub struct Claims {
     pub session: u64,
 }
 
+#[derive(Debug, Serialize, Deserialize)]
+pub struct RedisInfo {
+    pub email: String,
+    pub role: u64,
+    pub session: u64,
+    pub address: String,
+    pub browser: String,
+    pub token: String,
+}
+
 pub fn generate_token<T>(algorithm: Algorithm, key: &str, claims: T) -> Result<String, Error>
 where
     T: Serialize,

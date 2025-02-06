@@ -6,7 +6,7 @@ use actix_web::{
 use actix_web_httpauth::extractors::bearer::BearerAuth;
 use chrono::{Duration, Utc};
 use lib_app_state::AppState;
-use lib_crypto::jwt::{generate_token, validate_token, Algorithm, Claims};
+use lib_crypto::jwt::{generate_token, validate_token, Algorithm, Claims, RedisInfo};
 use lib_error::http::ResponseError;
 use lib_redis::Redis;
 use log::*;
@@ -71,35 +71,38 @@ pub async fn validator(
         // Get Refresh Token Claim
         let refresh_claim: Claims = token_dat.claims;
         // Get Redis Claim
-        if let Ok(redis_token) = Redis::get::<String>(
+        if let Ok(redis_info_str) = Redis::get::<String>(
             &redis,
             &format!("{}:{}", &refresh_claim.email, &refresh_claim.session),
         )
         .await
         {
-            if refresh_token == redis_token {
-                // Regenerate Access Token
-                let iat = Utc::now().timestamp();
-                let exp = (Utc::now() + Duration::minutes(jwt_access_session_min)).timestamp();
-                let session: u64 = refresh_claim.session;
-                let email = refresh_claim.email.to_string();
-                let access_claim = Claims {
-                    iat,
-                    exp,
-                    email: email.clone(),
-                    role: 0u64,
-                    session,
-                };
-                if let Ok(access_token) =
-                    generate_token(Algorithm::HS256, &jwt_access_key, access_claim)
-                {
-                    add_headers(
-                        &mut req,
-                        &refresh_claim,
-                        &format!("{} {}", &access_token, &refresh_token),
-                    );
-                    info!("User {} approved using refresh token", &refresh_claim.email);
-                    return Ok(req);
+            let redis_info = serde_json::from_str::<RedisInfo>(&redis_info_str);
+            if let Ok(redis_info) = redis_info {
+                if refresh_token == redis_info.token {
+                    // Regenerate Access Token
+                    let iat = Utc::now().timestamp();
+                    let exp = (Utc::now() + Duration::minutes(jwt_access_session_min)).timestamp();
+                    let session: u64 = refresh_claim.session;
+                    let email = refresh_claim.email.to_string();
+                    let access_claim = Claims {
+                        iat,
+                        exp,
+                        email: email.clone(),
+                        role: 0u64,
+                        session,
+                    };
+                    if let Ok(access_token) =
+                        generate_token(Algorithm::HS256, &jwt_access_key, access_claim)
+                    {
+                        add_headers(
+                            &mut req,
+                            &refresh_claim,
+                            &format!("{} {}", &access_token, &refresh_token),
+                        );
+                        info!("User {} approved using refresh token", &refresh_claim.email);
+                        return Ok(req);
+                    }
                 }
             }
         }
