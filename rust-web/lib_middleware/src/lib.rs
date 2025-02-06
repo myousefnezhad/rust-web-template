@@ -32,7 +32,10 @@ pub async fn validator(
             ));
         }
     };
-
+    let middleware_counter = state.middleware_counter.clone();
+    let mut counter = middleware_counter.lock().unwrap();
+    *counter += 1;
+    info!("Middleware counter is uptated to {}", *counter);
     let redis = state.redis.clone();
     let config = state.app_config.clone();
     let jwt_access_key = config.jwt_access_key.clone();

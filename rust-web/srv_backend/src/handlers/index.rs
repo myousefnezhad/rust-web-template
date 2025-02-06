@@ -7,15 +7,19 @@ use lib_error::http::ResponseError;
 #[template(path = "index.html")]
 struct IndexPage<'a> {
     data: &'a str,
+    counter: u64,
 }
 
 #[get("/")]
 pub async fn page_index(
     _req: HttpRequest,
-    _state: web::Data<AppState>,
+    state: web::Data<AppState>,
 ) -> Result<impl Responder, ResponseError> {
+    let middleware_counter = state.middleware_counter.clone();
+    let counter = *middleware_counter.lock().unwrap();
     let page = IndexPage {
         data: "Data From Server ",
+        counter,
     };
     Ok(HttpResponse::Ok().body(page.render().unwrap()))
 }

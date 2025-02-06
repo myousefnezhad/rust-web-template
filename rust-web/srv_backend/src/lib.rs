@@ -11,6 +11,7 @@ use lib_redis::Redis;
 use log::*;
 use sqlx::postgres::PgPoolOptions;
 use std::env;
+use std::sync::Arc;
 use std::thread::sleep;
 use std::time::Duration;
 
@@ -41,15 +42,16 @@ pub async fn backend_service() {
         .await
         .unwrap();
 
-    let redis_pool = match Redis::new(&redis_url) {
+    let redis = match Redis::new(&redis_url) {
         Ok(redis_pool) => redis_pool,
         Err(err) => panic!("Cannot connect Redis\n{}", err),
     };
 
     let app_state = AppState {
         app_config: app_config.clone(),
-        db_pool: db_pool,
-        redis: redis_pool,
+        db_pool,
+        redis,
+        middleware_counter: Arc::new(0u64.into()),
     };
 
     env_logger::init_from_env(Env::default().default_filter_or(app_config.log_level.clone()));
