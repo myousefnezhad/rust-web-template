@@ -1,0 +1,2 @@
+cd rust-web
+docker build -t rust_web:latest .
