@@ -1,2 +1,2 @@
-cd nginx
+cd rust-web
 docker compose up 

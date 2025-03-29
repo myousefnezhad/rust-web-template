@@ -8,5 +8,6 @@ RUN apt-get update
 RUN apt-get install libssl3 ca-certificates libssl-dev -y
 WORKDIR /
 COPY --from=builder /app/target/release/srv_backend /
+COPY --from=builder /app/SQL /SQL
 ENV APP="/srv_backend"
 CMD ["sh", "-c", "${APP}"]
