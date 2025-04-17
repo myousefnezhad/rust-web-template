@@ -1,4 +1,4 @@
-FROM rust:1.85.0-bookworm as builder
+FROM rust:1.86.0-bookworm as builder
 WORKDIR /app
 COPY . .
 RUN cargo build --bin srv_backend --release

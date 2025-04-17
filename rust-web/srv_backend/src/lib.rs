@@ -58,7 +58,7 @@ pub async fn backend_service() {
     let server = HttpServer::new(move || {
         App::new()
             .wrap(Logger::default())
-            .wrap(Logger::new("%a %{User-Agent}i"))
+            .wrap(Logger::new("%{host}i: %{X-Real-IP}i %a %{User-Agent}i"))
             .app_data(web::Data::new(app_state.clone()))
             .app_data(web::JsonConfig::default().limit(JSON_REQUEST_SIZE))
             .app_data(web::PayloadConfig::default().limit(PAYL_REQUEST_SIZE))
