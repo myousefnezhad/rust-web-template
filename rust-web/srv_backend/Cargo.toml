@@ -6,30 +6,30 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rand = "0.8.5"
-log = "0.4.20"
-dotenv = "0.15.0"
-askama = "0.12.1"
-jsonwebtoken = "9"
-actix-web = "4.4.0"
-env_logger = "0.10.0"
-ansi-escapes = "0.1.1"
-serde_json = "1.0.107"
-actix-web-lab = "0.20.0"
-actix-web-httpauth = "0.8.1"
-tokio = {version = "1.32.0", features = ["full"]}
-chrono = {version = "0.4.39", features=["serde"]}
-serde = {version = "1.0.188", features = ["derive"]}
-deadpool-redis = { version = "0.18", features = ["serde"] }
-reqwest = { version = "0.11", features = ["json", "rustls-tls"] }
-actix-session = {version = "0.8.0", features = ["cookie-session"]}
-sqlx = { version = "0.8", features = [ "runtime-tokio", "tls-native-tls", "postgres" ] }
+log = { workspace = true }
+sqlx = { workspace = true }
+rand = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+dotenv = { workspace = true }
+askama = { workspace = true }
+chrono = { workspace = true }
+reqwest = { workspace = true }
+actix-web = { workspace = true }
+env_logger = { workspace = true }
+serde_json = { workspace = true }
+jsonwebtoken = { workspace = true }
+ansi-escapes = { workspace = true }
+actix-web-lab = { workspace = true }
+deadpool-redis = { workspace = true }
+actix-session = { workspace = true }
+actix-web-httpauth = { workspace = true }
 
-lib_app_state = {path = "../lib_app_state"}
-lib_config = {path = "../lib_config"}
-lib_middleware = {path = "../lib_middleware"}
-lib_schema = {path = "../lib_schema"}
 lib_error = {path = "../lib_error"}
-lib_sql_lib ={path = "../lib_sql_lib"}
-lib_crypto = {path = "../lib_crypto"}
 lib_redis = {path = "../lib_redis"}
+lib_config = {path = "../lib_config"}
+lib_schema = {path = "../lib_schema"}
+lib_crypto = {path = "../lib_crypto"}
+lib_sql_lib ={path = "../lib_sql_lib"}
+lib_app_state = {path = "../lib_app_state"}
+lib_middleware = {path = "../lib_middleware"}

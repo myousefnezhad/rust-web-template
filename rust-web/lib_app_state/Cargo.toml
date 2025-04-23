@@ -1,20 +1,11 @@
 [package]
 name = "lib_app_state"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
-deadpool-redis = { version = "0.18", features = ["serde"] }
-sqlx = { version = "0.8", features = [
-    "runtime-tokio",
-    "tls-native-tls",
-    "postgres",
-    "chrono",
-] }
-uuid = { version = "1.11.0", features = [
-    "v4",
-    "fast-rng",
-    "macro-diagnostics",
-] }
+sqlx = { workspace = true }
+uuid = { workspace = true }
+deadpool-redis = { workspace = true }
 
 lib_config = { path = "../lib_config" }
